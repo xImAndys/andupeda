@@ -1,0 +1,139 @@
+@charset "UTF-8";
+
+body {
+  background-color: #161c24;
+}
+
+h2 {
+  text-align: center;
+  color: #eeeeee;
+}
+
+h3 {
+  text-align: center;
+  color: #eeeeee;
+}
+
+#lista {
+  text-align: center;
+}
+
+p {
+  color: #eeeeee;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+#antet {
+  background-color: #31363f;
+  color: #b9fafd;
+  text-align: center;
+  padding: 5px;
+  width: 1020px;
+  height: 70px;
+  font-family: "Rubik Scribble", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#antet1 {
+  background-color: #222831;
+  text-align: center;
+  padding: 5px;
+  width: 1020px;
+  height: 50px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#nav {
+  line-height: 30px;
+  background-color: #cc6699;
+  height: 560px;
+  width: 140px;
+  float: left;
+  padding: 5px;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#lista {
+  color: #eeeeee;
+}
+
+#continut {
+  background-color: #31363f;
+  font-family: "Reddit Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  padding: 10px;
+  width: 1010px;
+  height: auto;
+  float: center;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#subsol {
+  background-color: #222831;
+  color: #eeeeee;
+  clear: both;
+  width: 1014px;
+  height: 40px;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+  padding: 8px;
+  padding-top: 25px;
+  font-family: "Segoe Print", sans-serif;
+  font-size: 14px;
+}
+
+ul#menu {
+  padding: 0;
+}
+
+img {
+  border: 5px solid #76abae;
+}
+
+#freim {
+  padding: 1px;
+  border: 5px solid #76abae;
+}
+
+ul#menu li {
+  display: inline;
+}
+
+ul#menu li a {
+  background-color: #31363f;
+  color: #eeeeee;
+  padding: 5px 50px;
+  text-decoration: none;
+  font-family: "Reddit Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  border-radius: 20px;
+}
+
+ul#menu li a:hover {
+  background-color: #76abae;
+  transition: 2s;
+}
+
+#texttt {
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 0px;
+  padding-bottom: 20px;
+  color: white;
+}
