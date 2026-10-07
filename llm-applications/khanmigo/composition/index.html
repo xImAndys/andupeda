@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Khanmigo — LLM application deck</title>
+    <script src="vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: block; src: url("vendor/fonts/inter-latin-400-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: block; src: url("vendor/fonts/inter-latin-500-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: block; src: url("vendor/fonts/inter-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: block; src: url("vendor/fonts/inter-latin-700-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Inter"; font-weight: 800; font-style: normal; font-display: block; src: url("vendor/fonts/inter-latin-800-normal.woff2") format("woff2"); }
+      @font-face { font-family: "JetBrains Mono"; font-weight: 400; font-style: normal; font-display: block; src: url("vendor/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+      @font-face { font-family: "JetBrains Mono"; font-weight: 700; font-style: normal; font-display: block; src: url("vendor/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-weight: 600; font-style: normal; font-display: block; src: url("vendor/fonts/fraunces-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-weight: 700; font-style: normal; font-display: block; src: url("vendor/fonts/fraunces-latin-700-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Fraunces"; font-weight: 600; font-style: italic; font-display: block; src: url("vendor/fonts/fraunces-latin-600-italic.woff2") format("woff2"); }
+      :root {
+        --paper: #f5f2ea;
+        --card: #fffdf8;
+        --ink: #16181d;
+        --muted: #4f535c;
+        --rule: #d6d0c2;
+        --accent: #7FE0C4;
+        --accent-ink: #0B6650;
+        --accent-soft: #DDF6EE;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--paper); }
+      body { color: var(--ink); font-family: "Inter", system-ui, sans-serif; }
+      .scene { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background: var(--paper); }
+      .scene + .scene { opacity: 0; visibility: hidden; pointer-events: none; }
+      .clip { position: absolute; inset: 0; padding: 0 80px; }
+      .topbar { position: absolute; left: 80px; right: 80px; top: 48px; display: flex; justify-content: space-between; align-items: center;
+        font-size: 22px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+      .topbar .brand { display: flex; align-items: center; gap: 16px; }
+      .topbar .dot { display: block; width: 18px; height: 18px; border-radius: 4px; background: var(--accent); border: 2px solid var(--ink); }
+      .topbar .count { font-family: "JetBrains Mono", ui-monospace, monospace; letter-spacing: 0; }
+      .headline { position: absolute; left: 80px; right: 80px; top: 112px; margin: 0; max-width: 1640px;
+        font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 60px; line-height: 1.12; letter-spacing: -0.01em; }
+      .badge { display: inline-block; padding: 8px 16px; border-radius: 999px; background: var(--ink); color: var(--paper);
+        font-size: 22px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+      .refnum { font-family: "JetBrains Mono", ui-monospace, monospace; color: var(--accent-ink); font-weight: 700; }
+
+      /* slide 1 — title + references */
+      .title-wrap { position: absolute; left: 80px; top: 130px; width: 840px; }
+      .kicker { display: inline-block; padding: 10px 18px; background: var(--accent); border: 2px solid var(--ink); border-radius: 8px;
+        font-size: 24px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+      .app-title { margin: 36px 0 0; font-family: "Fraunces", Georgia, serif; font-weight: 700; font-size: 128px; line-height: 0.98; letter-spacing: -0.02em; }
+      .tagline { margin: 28px 0 0; font-size: 40px; line-height: 1.25; color: var(--ink); max-width: 860px; }
+      .facts { margin-top: 48px; display: grid; grid-template-columns: 1fr; gap: 0; border-top: 2px solid var(--ink); }
+      .fact { display: grid; grid-template-columns: 170px 1fr; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+      .fact .k { font-size: 22px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+      .fact .v { font-size: 30px; font-weight: 500; line-height: 1.25; }
+      .refs { position: absolute; right: 80px; top: 130px; width: 880px; max-height: 800px; overflow: hidden; background: var(--card);
+        border: 2px solid var(--ink); border-radius: 18px; padding: 36px 40px; box-shadow: 10px 10px 0 var(--accent); }
+      .refs h3 { margin: 0 0 22px; font-size: 26px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+      .refs ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
+      .refs li { display: grid; grid-template-columns: 48px 1fr; gap: 8px; }
+      .refs .rl { font-size: 27px; font-weight: 600; line-height: 1.25; }
+      .refs .ru { display: block; margin-top: 4px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 19px; line-height: 1.35;
+        color: var(--accent-ink); word-break: break-all; text-decoration: none; }
+
+      /* slide 2 — summary */
+      .sum-rows { position: absolute; left: 80px; top: 330px; width: 900px; border-top: 2px solid var(--ink); }
+      .sum-row { display: grid; grid-template-columns: 140px 1fr; gap: 24px; padding: 26px 0; border-bottom: 1px solid var(--rule); }
+      .sum-row .k { font-size: 24px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); padding-top: 6px; }
+      .sum-row .v { font-size: 34px; line-height: 1.32; }
+      .stats { position: absolute; right: 80px; top: 330px; width: 760px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+      .stat { background: var(--card); border: 2px solid var(--ink); border-radius: 18px; padding: 28px 28px 26px; min-height: 236px; }
+      .stat:first-child { background: var(--accent); }
+      .stat .n { font-family: "Fraunces", Georgia, serif; font-weight: 700; font-size: 84px; line-height: 1; letter-spacing: -0.02em; }
+      .stat .c { margin-top: 16px; font-size: 28px; line-height: 1.25; font-weight: 500; }
+      .source { position: absolute; left: 80px; bottom: 60px; font-size: 22px; color: var(--muted); }
+
+      /* slide 3 — diagram */
+      .diagram { position: absolute; left: 80px; top: 300px; width: 1760px; height: 600px; }
+      .diagram svg { position: absolute; inset: 0; overflow: visible; }
+      .node { position: absolute; width: 250px; height: 210px; overflow: hidden; border: 3px solid var(--ink); border-radius: 16px; background: var(--card);
+        padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 8px; }
+      .node.llm { background: var(--accent); }
+      .node.human, .node.user { border-style: dashed; }
+      .node .tag { align-self: flex-start; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 16px; font-weight: 700;
+        padding: 3px 9px; border-radius: 6px; background: var(--ink); color: var(--paper); letter-spacing: 0.04em; }
+      .node.llm .tag { background: var(--ink); color: var(--accent); }
+      .node .t { font-size: 28px; font-weight: 700; line-height: 1.15; }
+      .node .s { font-size: 21px; line-height: 1.3; color: var(--muted); }
+      .node.llm .s { color: var(--ink); }
+      .elabel { position: absolute; transform: translate(-50%, -50%); padding: 3px 12px; border-radius: 999px; background: var(--paper);
+        border: 2px solid var(--ink); font-size: 19px; font-weight: 700; white-space: nowrap; }
+      .legend { position: absolute; left: 80px; bottom: 56px; display: flex; gap: 28px; align-items: center; font-size: 21px; color: var(--muted); }
+      .legend .sw { display: inline-block; width: 26px; height: 20px; border: 3px solid var(--ink); border-radius: 5px; vertical-align: -3px; margin-right: 8px; background: var(--card); }
+      .legend .sw.llm { background: var(--accent); }
+      .legend .sw.human { border-style: dashed; }
+
+      /* slide 4 — prompts */
+      .guess { position: absolute; left: 80px; top: 300px; }
+      .prompts { position: absolute; left: 80px; right: 80px; top: 360px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+      .pblock { background: #15171c; color: #eceae3; border: 2px solid var(--ink); border-radius: 18px; overflow: hidden; height: 560px; }
+      .pblock .ph { padding: 16px 26px; background: var(--accent); color: var(--ink); font-size: 25px; font-weight: 800; border-bottom: 2px solid var(--ink); }
+      .pblock pre { margin: 0; padding: 22px 26px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 22.5px; line-height: 1.42; white-space: pre-wrap; }
+      .pblock .var { color: var(--accent); font-weight: 700; }
+      .pblock .role { color: #9ea3ad; font-weight: 700; }
+
+      /* slide 5 — screenshots */
+      .shots { position: absolute; left: 80px; right: 80px; top: 300px; bottom: 150px; display: flex; gap: 32px; justify-content: center; align-items: stretch; }
+      .shot { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+      .shot .frame { flex: 1 1 auto; min-height: 0; background: var(--card); border: 2px solid var(--ink); border-radius: 16px; overflow: hidden;
+        display: flex; align-items: center; justify-content: center; box-shadow: 8px 8px 0 var(--accent); }
+      .shot img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+      .shot .cap { font-size: 24px; line-height: 1.3; font-weight: 600; }
+      .shot .src { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 18px; color: var(--accent-ink); word-break: break-all; }
+      .placeholder { text-align: center; padding: 40px; font-size: 32px; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <script type="application/hyperframes-slideshow+json">
+{
+  "slides": [
+    {
+      "sceneId": "khanmigo-title",
+      "notes": "Introduce Khan Academy and Khanmigo. It is a nonprofit, and it was a GPT-4 launch partner. References are on the slide."
+    },
+    {
+      "sceneId": "khanmigo-summary",
+      "notes": "Lead with the Socratic idea: it never just gives the answer. Then the teacher side, pricing, and safety moderation."
+    },
+    {
+      "sceneId": "khanmigo-diagram",
+      "notes": "Walk through the loop: context, moderation, work check, Socratic reply, student retries. Moderation flags go to the parent or teacher."
+    },
+    {
+      "sceneId": "khanmigo-prompts",
+      "notes": "These are our guesses, based on Khan's published prompt-engineering principles: meet students where they are, use their interests, give immediate feedback, ask for self-explanation."
+    },
+    {
+      "sceneId": "khanmigo-screenshots",
+      "notes": "Show the real UI: exercise and tutor chat side by side."
+    }
+  ],
+  "slideSequences": []
+}
+    </script>
+
+    <!-- Slide 1 — Title + references -->
+    <div id="khanmigo-title" class="scene" data-composition-id="khanmigo-title" data-start="0" data-duration="6" data-label="Title + references" data-width="1920" data-height="1080">
+      <section id="khanmigo-title-clip" class="clip" data-start="0" data-duration="6" data-track-index="1">
+        <div class="topbar"><div class="brand"><span class="dot"></span><span>LLM applications · 02 · Education</span></div><div class="count">Khanmigo — 01 / 05</div></div>
+        <div class="title-wrap" data-anim>
+          <span class="kicker">LLM application 2 of 3</span>
+          <h1 class="app-title">Khanmigo</h1>
+          <p class="tagline">Khan Academy’s AI tutor for students and teaching assistant for teachers.</p>
+          <div class="facts"><div class="fact"><span class="k">Company</span><span class="v">Khan Academy — nonprofit online learning platform</span></div><div class="fact"><span class="k">Industry</span><span class="v">Education (K-12 tutoring &amp; teacher tools)</span></div><div class="fact"><span class="k">LLM</span><span class="v">OpenAI GPT-4 (launch partner); Azure OpenAI for teachers</span></div><div class="fact"><span class="k">Price</span><span class="v">Free for U.S. teachers; $4/month for learners &amp; parents</span></div></div>
+        </div>
+        <aside class="refs" data-anim><h3>References</h3><ol><li><span class="refnum">[1]</span><span><span class="rl">Khanmigo product site</span><a class="ru" href="https://www.khanmigo.ai/" target="_blank" rel="noopener">https://www.khanmigo.ai/</a></span></li><li><span class="refnum">[2]</span><span><span class="rl">OpenAI customer story — Khan Academy</span><a class="ru" href="https://openai.com/index/khan-academy/" target="_blank" rel="noopener">https://openai.com/index/khan-academy/</a></span></li><li><span class="refnum">[3]</span><span><span class="rl">Khan Academy — 7-step approach to prompt engineering</span><a class="ru" href="https://blog.khanacademy.org/khan-academys-7-step-approach-to-prompt-engineering-for-khanmigo" target="_blank" rel="noopener">https://blog.khanacademy.org/khan-academys-7-step-approach-to-prompt-engineering-for-khanmigo</a></span></li><li><span class="refnum">[4]</span><span><span class="rl">Khan Academy — prompt engineering a lesson plan</span><a class="ru" href="https://blog.khanacademy.org/prompt-engineering-using-ai-for-effective-lesson-planning/" target="_blank" rel="noopener">https://blog.khanacademy.org/prompt-engineering-using-ai-for-effective-lesson-planning/</a></span></li><li><span class="refnum">[5]</span><span><span class="rl">Khan Academy — unlimited tutoring for $4/month</span><a class="ru" href="https://blog.khanacademy.org/unlimited-homework-tutoring-for-4-month/" target="_blank" rel="noopener">https://blog.khanacademy.org/unlimited-homework-tutoring-for-4-month/</a></span></li><li><span class="refnum">[6]</span><span><span class="rl">Khan Academy Help — Khanmigo moderation</span><a class="ru" href="https://support.khanacademy.org/hc/en-us/articles/14394569357069" target="_blank" rel="noopener">https://support.khanacademy.org/hc/en-us/articles/14394569357069</a></span></li></ol></aside>
+      </section>
+    </div>
+
+    <!-- Slide 2 — Use-case summary -->
+    <div id="khanmigo-summary" class="scene" data-composition-id="khanmigo-summary" data-start="6" data-duration="6" data-label="Use-case summary" data-width="1920" data-height="1080">
+      <section id="khanmigo-summary-clip" class="clip" data-start="6" data-duration="6" data-track-index="1">
+        <div class="topbar"><div class="brand"><span class="dot"></span><span>LLM applications · 02 · Education</span></div><div class="count">Khanmigo — 02 / 05</div></div>
+        <h2 class="headline" data-anim>Khanmigo tutors like a patient teacher: it asks guiding questions instead of giving the answer.</h2>
+        <div class="sum-rows" data-anim><div class="sum-row"><span class="k">Who</span><span class="v">Students working through Khan Academy exercises, and teachers who plan lessons.</span></div><div class="sum-row"><span class="k">Job</span><span class="v">Tutor students step by step (Socratic method); help teachers write lesson plans, rubrics and more.</span></div><div class="sum-row"><span class="k">Safety</span><span class="v">Chats are moderated; flagged content triggers an alert to the child’s parent or teacher.</span></div></div>
+        <div class="stats" data-anim><div class="stat"><div class="n">GPT-4</div><div class="c">OpenAI launch partner, March 2023</div></div><div class="stat"><div class="n">$4</div><div class="c">per month for learners &amp; parents</div></div><div class="stat"><div class="n">Free</div><div class="c">for all U.S. teachers (Microsoft)</div></div><div class="stat"><div class="n">24/7</div><div class="c">always-available tutor</div></div></div>
+        <div class="source">Source: OpenAI story [2], Khan Academy blog [5], Khanmigo site [1]</div>
+      </section>
+    </div>
+
+    <!-- Slide 3 — Business-logic diagram -->
+    <div id="khanmigo-diagram" class="scene" data-composition-id="khanmigo-diagram" data-start="12" data-duration="6" data-label="Business-logic diagram" data-width="1920" data-height="1080">
+      <section id="khanmigo-diagram-clip" class="clip" data-start="12" data-duration="6" data-track-index="1">
+        <div class="topbar"><div class="brand"><span class="dot"></span><span>LLM applications · 02 · Education</span></div><div class="count">Khanmigo — 03 / 05</div></div>
+        <h2 class="headline" data-anim>Each student message passes a safety check, then a tutor prompt that knows the solution but only hints.</h2>
+        <div class="diagram" data-anim>
+          <svg width="1760" height="600" viewBox="0 0 1760 600" aria-hidden="true">
+            <defs><marker id="arrow-khanmigo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#16181d"/></marker></defs>
+            <path d="M 250 145 H 296" fill="none" stroke="#16181d" stroke-width="3.5" marker-end="url(#arrow-khanmigo)"/>
+            <path d="M 552 145 H 598" fill="none" stroke="#16181d" stroke-width="3.5" marker-end="url(#arrow-khanmigo)"/>
+            <path d="M 854 145 H 900" fill="none" stroke="#16181d" stroke-width="3.5" marker-end="url(#arrow-khanmigo)"/>
+            <path d="M 1156 145 H 1202" fill="none" stroke="#16181d" stroke-width="3.5" marker-end="url(#arrow-khanmigo)"/>
+            <path d="M 1458 145 H 1504" fill="none" stroke="#16181d" stroke-width="3.5" marker-end="url(#arrow-khanmigo)"/>
+            <path d="M 729 250 V 364" fill="none" stroke="#16181d" stroke-width="3.5" marker-end="url(#arrow-khanmigo)"/>
+            <path d="M 1333 250 V 364" fill="none" stroke="#16181d" stroke-width="3.5" stroke-dasharray="10 8" marker-end="url(#arrow-khanmigo)"/>
+            <path d="M 1635 40 V 6 H 125 V 34" fill="none" stroke="#16181d" stroke-width="3.5" marker-end="url(#arrow-khanmigo)"/>
+          </svg>
+          <div class="node user" style="left:0px;top:40px"><span class="tag">USER</span><div class="t">Student asks for help</div><div class="s">on a Khan Academy exercise</div></div><div class="node system" style="left:302px;top:40px"><span class="tag">SYSTEM</span><div class="t">Assemble context</div><div class="s">exercise, hidden solution, hints, grade</div></div><div class="node system" style="left:604px;top:40px"><span class="tag">SYSTEM</span><div class="t">Moderation check</div><div class="s">unsafe text or images?</div></div><div class="node llm" style="left:906px;top:40px"><span class="tag">LLM</span><div class="t">Check the work</div><div class="s">find the first wrong step</div></div><div class="node llm" style="left:1208px;top:40px"><span class="tag">LLM</span><div class="t">Socratic tutor reply</div><div class="s">one hint or question, no answer</div></div><div class="node user" style="left:1510px;top:40px"><span class="tag">USER</span><div class="t">Student tries again</div><div class="s">loop until they solve it</div></div><div class="node human" style="left:604px;top:370px"><span class="tag">HUMAN</span><div class="t">Parent / teacher alert</div><div class="s">email + in-app notification</div></div><div class="node human" style="left:1208px;top:370px"><span class="tag">HUMAN</span><div class="t">Chat history</div><div class="s">visible to parent / teacher</div></div><div class="node llm" style="left:0px;top:370px"><span class="tag">LLM</span><div class="t">Teacher tools</div><div class="s">separate flow: lesson plans from Khan content</div></div>
+          <span class="elabel" style="left:877px;top:276px">safe</span><span class="elabel" style="left:729px;top:307px">flagged</span><span class="elabel" style="left:880px;top:6px">next message</span>
+        </div>
+        <div class="legend"><span><span class="sw llm"></span>LLM step</span><span><span class="sw"></span>Software / data</span><span><span class="sw human"></span>Person</span><span>· Reconstructed from public sources [2][3][4][6]; the internal work-check step is our inference.</span></div>
+      </section>
+    </div>
+
+    <!-- Slide 4 — Key prompts (our guess) -->
+    <div id="khanmigo-prompts" class="scene" data-composition-id="khanmigo-prompts" data-start="18" data-duration="6" data-label="Key prompts (our guess)" data-width="1920" data-height="1080">
+      <section id="khanmigo-prompts-clip" class="clip" data-start="18" data-duration="6" data-track-index="1">
+        <div class="topbar"><div class="brand"><span class="dot"></span><span>LLM applications · 02 · Education</span></div><div class="count">Khanmigo — 04 / 05</div></div>
+        <h2 class="headline" data-anim>Our guess: the tutor prompt sees the solution, hides it, and builds on learning-science rules.</h2>
+        <div class="guess" data-anim><span class="badge">Our educated guess — not Khan Academy’s actual prompt</span></div>
+        <div class="prompts" data-anim><div class="pblock"><div class="ph">Prompt A · Socratic tutor (student)</div><pre><span class="role">SYSTEM</span>
+You are Khanmigo, a friendly, patient tutor.
+Student: grade <span class="var">{grade}</span>, interests: <span class="var">{interests}</span>.
+Exercise: <span class="var">{exercise_text}</span>
+Solution (NEVER reveal): <span class="var">{solution_steps}</span>
+Rules:
+- Never give the final answer or do a step
+  for the student.
+- First ask what they have tried so far.
+- Ask ONE guiding question at a time.
+- If a step is wrong, point to where and ask
+  them to explain their reasoning.
+- Use examples from their interests.
+- Keep replies under 60 words.</pre></div><div class="pblock"><div class="ph">Prompt B · Hidden work check (not shown)</div><pre><span class="role">SYSTEM</span>
+Compare the student's work with the solution.
+Student work: <span class="var">{student_work}</span>
+Solution: <span class="var">{solution_steps}</span>
+Return JSON only:
+{&quot;first_wrong_step&quot;: &lt;number or null&gt;,
+ &quot;misconception&quot;: &quot;...&quot;,
+ &quot;next_hint_goal&quot;: &quot;...&quot;}
+
+-- Teacher tool (chained prompts) --
+Write a lesson plan for <span class="var">{standard}</span>.
+Use only this Khan content: <span class="var">{articles}</span>,
+<span class="var">{video_transcripts}</span>, <span class="var">{practice_items}</span>.</pre></div></div>
+      </section>
+    </div>
+
+    <!-- Slide 5 — Screenshots -->
+    <div id="khanmigo-screenshots" class="scene" data-composition-id="khanmigo-screenshots" data-start="24" data-duration="6" data-label="Screenshots" data-width="1920" data-height="1080">
+      <section id="khanmigo-screenshots-clip" class="clip" data-start="24" data-duration="6" data-track-index="1">
+        <div class="topbar"><div class="brand"><span class="dot"></span><span>LLM applications · 02 · Education</span></div><div class="count">Khanmigo — 05 / 05</div></div>
+        <h2 class="headline" data-anim>Khanmigo works inside Khan Academy: the tutor chat sits next to the student’s exercise.</h2>
+        <div class="shots" data-anim><div class="shot"><div class="frame"><div class="placeholder">Screenshot not captured yet — run <code>npm run capture</code>.</div></div></div></div>
+      </section>
+    </div>
+
+    <!-- Deck timeline: spans the whole deck so the slideshow can seek to any slide. -->
+    <script>
+      (function () {
+        var tl = gsap.timeline({ paused: true });
+        tl.to({}, { duration: 30 });
+        // Keyed by the first scene's id: lint requires a matching
+        // data-composition-id, and the player looks up the timeline by it.
+        window.__timelines = window.__timelines || {};
+        window.__timelines["khanmigo-title"] = tl;
+      })();
+    </script>
+
+    <!-- Visibility controller + entrance motion (standalone slideshow harness). -->
+    <script>
+      (function () {
+        var scenes = [{"id":"khanmigo-title","start":0,"end":6},{"id":"khanmigo-summary","start":6,"end":12},{"id":"khanmigo-diagram","start":12,"end":18},{"id":"khanmigo-prompts","start":18,"end":24},{"id":"khanmigo-screenshots","start":24,"end":30}];
+        // Entrance motion only runs inside the slideshow player (an iframe);
+        // headless validation and snapshots see the static end state.
+        var animate = window.self !== window.top;
+        var lastActiveId = null;
+
+        function fireEntrance(sceneEl) {
+          var els = sceneEl.querySelectorAll("[data-anim]");
+          if (!animate || !els.length) return;
+          gsap.fromTo(els, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.08, ease: "power2.out", overwrite: true });
+        }
+
+        function updateVisibility(t) {
+          for (var i = 0; i < scenes.length; i++) {
+            var s = scenes[i];
+            var el = document.getElementById(s.id);
+            if (!el) continue;
+            var last = i === scenes.length - 1;
+            var active = t >= s.start && (t < s.end || (last && t <= s.end));
+            el.style.opacity = active ? "1" : "0";
+            el.style.visibility = active ? "visible" : "hidden";
+            el.style.pointerEvents = active ? "auto" : "none";
+            if (active && lastActiveId !== s.id) {
+              lastActiveId = s.id;
+              fireEntrance(el);
+            }
+          }
+        }
+
+        window.__hfSetTime = updateVisibility;
+        updateVisibility(0);
+
+        var root = window.__timelines && window.__timelines["khanmigo-title"];
+        if (root) {
+          root.eventCallback("onUpdate", function () {
+            updateVisibility(root.time());
+          });
+        }
+      })();
+    </script>
+
+    <!-- Tell <hyperframes-slideshow> where every scene sits on the timeline. -->
+    <script>
+      (function () {
+        var scenes = [{"id":"khanmigo-title","start":0,"duration":6},{"id":"khanmigo-summary","start":6,"duration":6},{"id":"khanmigo-diagram","start":12,"duration":6},{"id":"khanmigo-prompts","start":18,"duration":6},{"id":"khanmigo-screenshots","start":24,"duration":6}];
+        function postTimeline() {
+          if (window.parent === window) return;
+          window.parent.postMessage({ source: "hf-preview", type: "timeline", durationInFrames: 900, scenes: scenes }, "*");
+        }
+        if (document.readyState === "complete") setTimeout(postTimeline, 300);
+        else window.addEventListener("load", function () { setTimeout(postTimeline, 300); });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "llm-applications-decks",
+  "private": true,
+  "description": "Three HyperFrames slideshows (5 slides each) on LLM applications in fintech, education and healthcare.",
+  "scripts": {
+    "build": "node build/build.mjs",
+    "klarna": "npx hyperframes present ./klarna-ai-assistant/composition",
+    "khanmigo": "npx hyperframes present ./khanmigo/composition",
+    "abridge": "npx hyperframes present ./abridge/composition",
+    "check": "npx hyperframes check ./klarna-ai-assistant/composition && npx hyperframes check ./khanmigo/composition && npx hyperframes check ./abridge/composition"
+  }
+}
