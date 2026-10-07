@@ -32,6 +32,8 @@
       .scene { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background: var(--paper); }
       .scene + .scene { opacity: 0; visibility: hidden; pointer-events: none; }
       .clip { position: absolute; inset: 0; padding: 0 80px; }
+      #deck-progress { position: absolute; left: 0; top: 0; width: 100%; height: 8px; background: var(--rule); z-index: 5; }
+      #deck-progress-fill { display: block; width: 100%; height: 100%; background: var(--accent-ink); transform-origin: 0 50%; }
       .topbar { position: absolute; left: 80px; right: 80px; top: 48px; display: flex; justify-content: space-between; align-items: center;
         font-size: 22px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
       .topbar .brand { display: flex; align-items: center; gap: 16px; }
@@ -104,13 +106,14 @@
       .pblock .role { color: #9ea3ad; font-weight: 700; }
 
       /* slide 5 — screenshots */
-      .shots { position: absolute; left: 80px; right: 80px; top: 300px; bottom: 150px; display: flex; gap: 32px; justify-content: center; align-items: stretch; }
-      .shot { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-      .shot .frame { flex: 1 1 auto; min-height: 0; background: var(--card); border: 2px solid var(--ink); border-radius: 16px; overflow: hidden;
+      .shots { position: absolute; left: 80px; right: 80px; top: 290px; bottom: 120px; display: flex; flex-direction: column; justify-content: center; }
+      .shots-row { display: flex; gap: 32px; justify-content: center; align-items: flex-start; }
+      .shot { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+      .shot .frame { width: 100%; background: var(--card); border: 2px solid var(--ink); border-radius: 16px; overflow: hidden;
         display: flex; align-items: center; justify-content: center; box-shadow: 8px 8px 0 var(--accent); }
-      .shot img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+      .shot img { display: block; width: 100%; height: 100%; object-fit: contain; }
       .shot .cap { font-size: 24px; line-height: 1.3; font-weight: 600; }
-      .shot .src { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 18px; color: var(--accent-ink); word-break: break-all; }
+      .shot .src { margin-top: 4px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 19px; color: var(--accent-ink); }
       .placeholder { text-align: center; padding: 40px; font-size: 32px; color: var(--muted); }
     </style>
   </head>
@@ -136,7 +139,7 @@
     },
     {
       "sceneId": "abridge-screenshots",
-      "notes": "Show the real product UI with the note and its linked evidence."
+      "notes": "Real product UI. Recording in Epic Haiku on a phone, then the draft note in Epic with Linked Evidence next to the transcript."
     }
   ],
   "slideSequences": []
@@ -144,7 +147,7 @@
     </script>
 
     <!-- Slide 1 — Title + references -->
-    <div id="abridge-title" class="scene" data-composition-id="abridge-title" data-start="0" data-duration="6" data-label="Title + references" data-width="1920" data-height="1080">
+    <div id="abridge-title" class="scene" data-composition-id="abridge-title" data-no-timeline data-start="0" data-duration="6" data-label="Title + references" data-width="1920" data-height="1080">
       <section id="abridge-title-clip" class="clip" data-start="0" data-duration="6" data-track-index="1">
         <div class="topbar"><div class="brand"><span class="dot"></span><span>LLM applications · 03 · Healthcare</span></div><div class="count">Abridge — 01 / 05</div></div>
         <div class="title-wrap" data-anim>
@@ -229,16 +232,20 @@ TRANSCRIPT: <span class="var">{transcript}</span></pre></div></div>
     <div id="abridge-screenshots" class="scene" data-composition-id="abridge-screenshots" data-start="24" data-duration="6" data-label="Screenshots" data-width="1920" data-height="1080">
       <section id="abridge-screenshots-clip" class="clip" data-start="24" data-duration="6" data-track-index="1">
         <div class="topbar"><div class="brand"><span class="dot"></span><span>LLM applications · 03 · Healthcare</span></div><div class="count">Abridge — 05 / 05</div></div>
-        <h2 class="headline" data-anim>Abridge shows the draft note next to the conversation, so the clinician can check each line.</h2>
-        <div class="shots" data-anim><div class="shot"><div class="frame"><div class="placeholder">Screenshot not captured yet — run <code>npm run capture</code>.</div></div></div></div>
+        <h2 class="headline" data-anim>Clinicians record in Epic’s mobile app, then review a note whose lines link back to the transcript.</h2>
+        <div class="shots" data-anim><div class="shots-row"><figure class="shot" style="margin:0;flex:0 1 234px"><div class="frame" style="aspect-ratio:0.468"><img src="assets/abridge-recording.webp" alt="Recording a visit in Epic’s mobile app (Haiku)"></div><figcaption><div class="cap">Recording a visit in Epic’s mobile app (Haiku)</div><div class="src">abridge.com/product [1]</div></figcaption></figure><figure class="shot" style="margin:0;flex:0 1 764px"><div class="frame" style="aspect-ratio:1.528"><img src="assets/abridge-linked-evidence.webp" alt="Draft note with Linked Evidence next to the transcript, in Epic"></div><figcaption><div class="cap">Draft note with Linked Evidence next to the transcript, in Epic</div><div class="src">abridge.com/product [1]</div></figcaption></figure></div></div>
       </section>
     </div>
+
+    <div id="deck-progress" aria-hidden="true"><div id="deck-progress-fill"></div></div>
 
     <!-- Deck timeline: spans the whole deck so the slideshow can seek to any slide. -->
     <script>
       (function () {
         var tl = gsap.timeline({ paused: true });
-        tl.to({}, { duration: 30 });
+        // Deck progress bar: fills across the whole deck, so each slide's rest
+        // frame shows how far through the 5 slides the audience is.
+        tl.fromTo("#deck-progress-fill", { scaleX: 0 }, { scaleX: 1, duration: 30, ease: "none" }, 0);
         // Keyed by the first scene's id: lint requires a matching
         // data-composition-id, and the player looks up the timeline by it.
         window.__timelines = window.__timelines || {};

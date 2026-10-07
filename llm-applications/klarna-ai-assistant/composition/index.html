@@ -32,6 +32,8 @@
       .scene { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background: var(--paper); }
       .scene + .scene { opacity: 0; visibility: hidden; pointer-events: none; }
       .clip { position: absolute; inset: 0; padding: 0 80px; }
+      #deck-progress { position: absolute; left: 0; top: 0; width: 100%; height: 8px; background: var(--rule); z-index: 5; }
+      #deck-progress-fill { display: block; width: 100%; height: 100%; background: var(--accent-ink); transform-origin: 0 50%; }
       .topbar { position: absolute; left: 80px; right: 80px; top: 48px; display: flex; justify-content: space-between; align-items: center;
         font-size: 22px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
       .topbar .brand { display: flex; align-items: center; gap: 16px; }
@@ -104,13 +106,14 @@
       .pblock .role { color: #9ea3ad; font-weight: 700; }
 
       /* slide 5 — screenshots */
-      .shots { position: absolute; left: 80px; right: 80px; top: 300px; bottom: 150px; display: flex; gap: 32px; justify-content: center; align-items: stretch; }
-      .shot { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-      .shot .frame { flex: 1 1 auto; min-height: 0; background: var(--card); border: 2px solid var(--ink); border-radius: 16px; overflow: hidden;
+      .shots { position: absolute; left: 80px; right: 80px; top: 290px; bottom: 120px; display: flex; flex-direction: column; justify-content: center; }
+      .shots-row { display: flex; gap: 32px; justify-content: center; align-items: flex-start; }
+      .shot { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+      .shot .frame { width: 100%; background: var(--card); border: 2px solid var(--ink); border-radius: 16px; overflow: hidden;
         display: flex; align-items: center; justify-content: center; box-shadow: 8px 8px 0 var(--accent); }
-      .shot img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+      .shot img { display: block; width: 100%; height: 100%; object-fit: contain; }
       .shot .cap { font-size: 24px; line-height: 1.3; font-weight: 600; }
-      .shot .src { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 18px; color: var(--accent-ink); word-break: break-all; }
+      .shot .src { margin-top: 4px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 19px; color: var(--accent-ink); }
       .placeholder { text-align: center; padding: 40px; font-size: 32px; color: var(--muted); }
     </style>
   </head>
@@ -136,7 +139,7 @@
     },
     {
       "sceneId": "klarna-ai-assistant-screenshots",
-      "notes": "Show the real product UI. Point out that it is a chat inside the app, not a separate website."
+      "notes": "Real product UI. Left: Klarna’s launch image. Middle: an answer grounded in the shopper’s own order. Right: the handoff to a human agent."
     }
   ],
   "slideSequences": []
@@ -144,7 +147,7 @@
     </script>
 
     <!-- Slide 1 — Title + references -->
-    <div id="klarna-ai-assistant-title" class="scene" data-composition-id="klarna-ai-assistant-title" data-start="0" data-duration="6" data-label="Title + references" data-width="1920" data-height="1080">
+    <div id="klarna-ai-assistant-title" class="scene" data-composition-id="klarna-ai-assistant-title" data-no-timeline data-start="0" data-duration="6" data-label="Title + references" data-width="1920" data-height="1080">
       <section id="klarna-ai-assistant-title-clip" class="clip" data-start="0" data-duration="6" data-track-index="1">
         <div class="topbar"><div class="brand"><span class="dot"></span><span>LLM applications · 01 · Fintech · Payments</span></div><div class="count">Klarna AI Assistant — 01 / 05</div></div>
         <div class="title-wrap" data-anim>
@@ -230,16 +233,20 @@ Rules:
     <div id="klarna-ai-assistant-screenshots" class="scene" data-composition-id="klarna-ai-assistant-screenshots" data-start="24" data-duration="6" data-label="Screenshots" data-width="1920" data-height="1080">
       <section id="klarna-ai-assistant-screenshots-clip" class="clip" data-start="24" data-duration="6" data-track-index="1">
         <div class="topbar"><div class="brand"><span class="dot"></span><span>LLM applications · 01 · Fintech · Payments</span></div><div class="count">Klarna AI Assistant — 05 / 05</div></div>
-        <h2 class="headline" data-anim>In the Klarna app, the assistant answers as a chat thread next to the customer’s orders and payments.</h2>
-        <div class="shots" data-anim><div class="shot"><div class="frame"><div class="placeholder">Screenshot not captured yet — run <code>npm run capture</code>.</div></div></div></div>
+        <h2 class="headline" data-anim>Shoppers chat with the assistant about their own orders; it hands off to a human when it can’t help.</h2>
+        <div class="shots" data-anim><div class="shots-row"><figure class="shot" style="margin:0;flex:0 1 1000px"><div class="frame" style="aspect-ratio:2"><img src="assets/klarna-launch.webp" alt="Klarna’s launch image: the assistant inside the Klarna app"></div><figcaption><div class="cap">Klarna’s launch image: the assistant inside the Klarna app</div><div class="src">Klarna, via cxtoday.com [5]</div></figcaption></figure><figure class="shot" style="margin:0;flex:0 1 662px"><div class="frame" style="aspect-ratio:1.323"><img src="assets/klarna-order-question.webp" alt="Answering a question about the shopper’s own order"></div><figcaption><div class="cap">Answering a question about the shopper’s own order</div><div class="src">pragmaticengineer.com [4]</div></figcaption></figure><figure class="shot" style="margin:0;flex:0 1 808px"><div class="frame" style="aspect-ratio:1.615"><img src="assets/klarna-human-handoff.webp" alt="Out-of-scope question: offers a human agent"></div><figcaption><div class="cap">Out-of-scope question: offers a human agent</div><div class="src">pragmaticengineer.com [4]</div></figcaption></figure></div></div>
       </section>
     </div>
+
+    <div id="deck-progress" aria-hidden="true"><div id="deck-progress-fill"></div></div>
 
     <!-- Deck timeline: spans the whole deck so the slideshow can seek to any slide. -->
     <script>
       (function () {
         var tl = gsap.timeline({ paused: true });
-        tl.to({}, { duration: 30 });
+        // Deck progress bar: fills across the whole deck, so each slide's rest
+        // frame shows how far through the 5 slides the audience is.
+        tl.fromTo("#deck-progress-fill", { scaleX: 0 }, { scaleX: 1, duration: 30, ease: "none" }, 0);
         // Keyed by the first scene's id: lint requires a matching
         // data-composition-id, and the player looks up the timeline by it.
         window.__timelines = window.__timelines || {};

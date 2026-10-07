@@ -61,6 +61,8 @@ function css(theme) {
       .scene { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: hidden; background: var(--paper); }
       .scene + .scene { opacity: 0; visibility: hidden; pointer-events: none; }
       .clip { position: absolute; inset: 0; padding: 0 80px; }
+      #deck-progress { position: absolute; left: 0; top: 0; width: 100%; height: 8px; background: var(--rule); z-index: 5; }
+      #deck-progress-fill { display: block; width: 100%; height: 100%; background: var(--accent-ink); transform-origin: 0 50%; }
       .topbar { position: absolute; left: 80px; right: 80px; top: 48px; display: flex; justify-content: space-between; align-items: center;
         font-size: 22px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
       .topbar .brand { display: flex; align-items: center; gap: 16px; }
@@ -133,13 +135,14 @@ function css(theme) {
       .pblock .role { color: #9ea3ad; font-weight: 700; }
 
       /* slide 5 — screenshots */
-      .shots { position: absolute; left: 80px; right: 80px; top: 300px; bottom: 150px; display: flex; gap: 32px; justify-content: center; align-items: stretch; }
-      .shot { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-      .shot .frame { flex: 1 1 auto; min-height: 0; background: var(--card); border: 2px solid var(--ink); border-radius: 16px; overflow: hidden;
+      .shots { position: absolute; left: 80px; right: 80px; top: 290px; bottom: 120px; display: flex; flex-direction: column; justify-content: center; }
+      .shots-row { display: flex; gap: 32px; justify-content: center; align-items: flex-start; }
+      .shot { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+      .shot .frame { width: 100%; background: var(--card); border: 2px solid var(--ink); border-radius: 16px; overflow: hidden;
         display: flex; align-items: center; justify-content: center; box-shadow: 8px 8px 0 var(--accent); }
-      .shot img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+      .shot img { display: block; width: 100%; height: 100%; object-fit: contain; }
       .shot .cap { font-size: 24px; line-height: 1.3; font-weight: 600; }
-      .shot .src { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 18px; color: var(--accent-ink); word-break: break-all; }
+      .shot .src { margin-top: 4px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 19px; color: var(--accent-ink); }
       .placeholder { text-align: center; padding: 40px; font-size: 32px; color: var(--muted); }
 `;
 }
@@ -276,18 +279,20 @@ function loadShots(deck) {
   return { dir, shots: JSON.parse(readFileSync(manifest, "utf-8")) };
 }
 
+const SHOT_H = 500; // tallest a screenshot frame gets; wide sets shrink to fit
+
 function slideShots(deck, shots) {
   const body = shots.length
     ? shots
         .map(
           (s) =>
-            `<figure class="shot" style="margin:0;flex-grow:${s.grow ?? 1}"><div class="frame"><img src="assets/${esc(s.file)}" alt="${esc(s.alt ?? s.caption)}"></div><figcaption><div class="cap">${esc(s.caption)}</div><div class="src">${esc(s.source)}</div></figcaption></figure>`,
+            `<figure class="shot" style="margin:0;flex:0 1 ${Math.round((s.grow ?? 1) * SHOT_H)}px"><div class="frame" style="aspect-ratio:${s.grow ?? 1}"><img src="assets/${esc(s.file)}" alt="${esc(s.alt ?? s.caption)}"></div><figcaption><div class="cap">${esc(s.caption)}</div><div class="src">${esc(s.source)}</div></figcaption></figure>`,
         )
         .join("")
-    : `<div class="shot"><div class="frame"><div class="placeholder">Screenshot not captured yet — run <code>npm run capture</code>.</div></div></div>`;
+    : `<div class="shot"><div class="frame"><div class="placeholder">Screenshot pending: add images to build/screenshots/${esc(deck.slug)}/</div></div></div>`;
   return `${topbar(deck, 5)}
         <h2 class="headline" data-anim>${esc(deck.screenshots.headline)}</h2>
-        <div class="shots" data-anim>${body}</div>`;
+        <div class="shots" data-anim><div class="shots-row">${body}</div></div>`;
 }
 
 // ── composition + wrapper ────────────────────────────────────────────────
@@ -307,9 +312,13 @@ function composition(deck, shots) {
   const scenes = ids
     .map((id, i) => {
       const start = i * SLIDE_SECONDS;
+      // `hyperframes check` treats the first scene as the whole composition
+      // (6s) and flags its static frames. Slides are still by design and the
+      // slideshow controller does the seeking, so mark that root still.
+      const still = i === 0 ? " data-no-timeline" : "";
       return `
     <!-- Slide ${i + 1} — ${labels[i]} -->
-    <div id="${id}" class="scene" data-composition-id="${id}" data-start="${start}" data-duration="${SLIDE_SECONDS}" data-label="${labels[i]}" data-width="1920" data-height="1080">
+    <div id="${id}" class="scene" data-composition-id="${id}"${still} data-start="${start}" data-duration="${SLIDE_SECONDS}" data-label="${labels[i]}" data-width="1920" data-height="1080">
       <section id="${id}-clip" class="clip" data-start="${start}" data-duration="${SLIDE_SECONDS}" data-track-index="1">
         ${bodies[i]}
       </section>
@@ -334,11 +343,15 @@ ${island(deck)}
     </script>
 ${scenes}
 
+    <div id="deck-progress" aria-hidden="true"><div id="deck-progress-fill"></div></div>
+
     <!-- Deck timeline: spans the whole deck so the slideshow can seek to any slide. -->
     <script>
       (function () {
         var tl = gsap.timeline({ paused: true });
-        tl.to({}, { duration: ${TOTAL} });
+        // Deck progress bar: fills across the whole deck, so each slide's rest
+        // frame shows how far through the 5 slides the audience is.
+        tl.fromTo("#deck-progress-fill", { scaleX: 0 }, { scaleX: 1, duration: ${TOTAL}, ease: "none" }, 0);
         // Keyed by the first scene's id: lint requires a matching
         // data-composition-id, and the player looks up the timeline by it.
         window.__timelines = window.__timelines || {};

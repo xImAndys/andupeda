@@ -1,0 +1,20 @@
+[
+  {
+    "file": "klarna-launch.webp",
+    "caption": "Klarna’s launch image: the assistant inside the Klarna app",
+    "source": "Klarna, via cxtoday.com [5]",
+    "grow": 2.0
+  },
+  {
+    "file": "klarna-order-question.webp",
+    "caption": "Answering a question about the shopper’s own order",
+    "source": "pragmaticengineer.com [4]",
+    "grow": 1.323
+  },
+  {
+    "file": "klarna-human-handoff.webp",
+    "caption": "Out-of-scope question: offers a human agent",
+    "source": "pragmaticengineer.com [4]",
+    "grow": 1.615
+  }
+]

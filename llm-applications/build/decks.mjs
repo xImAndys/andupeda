@@ -100,14 +100,14 @@ Rules:
       ],
     },
     screenshots: {
-      headline: "In the Klarna app, the assistant answers as a chat thread next to the customer’s orders and payments.",
+      headline: "Shoppers chat with the assistant about their own orders; it hands off to a human when it can’t help.",
     },
     notes: [
       "Introduce Klarna: Swedish fintech, buy-now-pay-later. The assistant lives inside the Klarna app. References are on the slide.",
       "Lead with the two-thirds number. Then who uses it, what it does, and the four headline metrics from Klarna's press release.",
       "Walk left to right: context load, LLM router, specialist prompt plus tools, reply. Point out the human handoff and the LangSmith evaluation loop.",
       "These are our guesses. The router returns structured JSON. The specialist gets only the customer's own data and is told never to invent numbers.",
-      "Show the real product UI. Point out that it is a chat inside the app, not a separate website.",
+      "Real product UI. Left: Klarna’s launch image. Middle: an answer grounded in the shopper’s own order. Right: the handoff to a human agent.",
     ],
   },
 
@@ -210,14 +210,14 @@ Use only this Khan content: {articles},
       ],
     },
     screenshots: {
-      headline: "Khanmigo works inside Khan Academy: the tutor chat sits next to the student’s exercise.",
+      headline: "Khanmigo is a chat tutor that guides instead of answering, and flags unsafe conversations.",
     },
     notes: [
       "Introduce Khan Academy and Khanmigo. It is a nonprofit, and it was a GPT-4 launch partner. References are on the slide.",
       "Lead with the Socratic idea: it never just gives the answer. Then the teacher side, pricing, and safety moderation.",
       "Walk through the loop: context, moderation, work check, Socratic reply, student retries. Moderation flags go to the parent or teacher.",
       "These are our guesses, based on Khan's published prompt-engineering principles: meet students where they are, use their interests, give immediate feedback, ask for self-explanation.",
-      "Show the real UI: exercise and tutor chat side by side.",
+      "Real product UI. The learner home with activities, a homework chat where Khanmigo refuses to do the work, and the moderation warning.",
     ],
   },
 
@@ -318,14 +318,14 @@ TRANSCRIPT: {transcript}`,
       ],
     },
     screenshots: {
-      headline: "Abridge shows the draft note next to the conversation, so the clinician can check each line.",
+      headline: "Clinicians record in Epic’s mobile app, then review a note whose lines link back to the transcript.",
     },
     notes: [
       "Introduce Abridge: healthcare AI, ambient documentation, used inside Epic. References are on the slide.",
       "Lead with the problem: documentation burden. Abridge drafts the note during the visit. Linked Evidence is the trust feature.",
       "Walk the pipeline: record, speech-to-text, EHR context, LLM draft, Linked Evidence, human review and signature. Codes and orders come from the Contextual Reasoning Engine.",
       "These are our guesses. The key constraint is grounding: only facts from the visit, a citation per sentence, and placeholders instead of guesses.",
-      "Show the real product UI with the note and its linked evidence.",
+      "Real product UI. Recording in Epic Haiku on a phone, then the draft note in Epic with Linked Evidence next to the transcript.",
     ],
   },
 ];
